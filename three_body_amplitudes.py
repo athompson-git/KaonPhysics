@@ -1,15 +1,74 @@
 """
 3 body amplitudes for K -> pi pi X
+Adapted from alplib Matrix elements classes.
 """
 
-import sys
-sys.path.append("../")
-from alplib.cross_section_mc import *
+from constants import *
+import numpy as np
+from numpy import sqrt, pi
+from scipy.integrate import quad
 
 
+################################################################################
+# Define generic superclasses for matrix elements
+################################################################################
+
+
+class MatrixElementDecay2:
+    """
+    Generic matrix elements for a 2-body decay
+    m_parent: mass of the parent
+    m1, m2: masses of daughters 1 and 2
+    __call__: to be overridden by inheriting classes.
+    """
+    def __init__(self, m_parent, m1, m2):
+        self.m_parent = m_parent
+        self.m1 = m1
+        self.m2 = m2
+
+    def __call__(self):
+        return 0.0
+
+
+
+
+class MatrixElementDecay3:
+    """
+    Generic matrix elements for a 2-body decay
+    m_parent: mass of the parent
+    m1, m2, m3: masses of daughters 1 and 2
+    __call__: to be overridden by inheriting classes.
+    """
+    def __init__(self, m_parent, m1, m2, m3):
+        self.m_parent = m_parent
+        self.m1 = m1
+        self.m2 = m2
+        self.m3 = m3
+
+    def __call__(self, m122, m232):
+        return 0.0
+
+    def get_sp_from_dalitz(self, m122, m232):
+        sp03 = (self.m_parent**2 + self.m3**2 - m122)/2
+        sp01 = (self.m_parent**2 + self.m1**2 - m232)/2
+        sp02 = (m122 + m232 - self.m1**2 - self.m3**2)/2
+        sp13 = (self.m_parent**2 + self.m2**2 - m122 - m232)/2
+        sp23 = (m232 - self.m2**2 - self.m3**2)/2
+        sp12 = (m122 - self.m1**2 - self.m2**2)/2
+
+        return sp01, sp02, sp03, sp12, sp13, sp23
+
+
+
+
+################################################################################
 # define matrix elements
+################################################################################
+
 G_8 = 8.49e-12  # MeV^-2
-## F_PI in alplib = 130.2 MeV, we use ~90
+
+### F_PI in constants = 130.2 MeV, we use ~90, so we multiply by sqrt(2)
+### where necessary in the below class defs.
 
 class KL_to_pip_pim_X(MatrixElementDecay3):
     """
@@ -89,8 +148,9 @@ class Kp_to_pip_pi0_X(MatrixElementDecay3):
 
 
 
-
-#### Exact decay widths ###
+################################################################################
+# Exact decay widths ###
+################################################################################
 
 KAPPA = 7.35e-8
 PI_K_RATIO_SQ = (M_PI/M_K)**2
@@ -101,9 +161,9 @@ def dGamma_dxdy_KPiGammaX(y, x, gKPI, mX):
 
     rX = (mX / M_K)**2
     x_pi_gamma = (M_K**2 + mX**2 + M_PI**2 - x - y) / M_K**2
-    N0 = x_pi_gamma*y - r**2 * (1 - x_pi_gamma * (1 - 2 * y))
-    D1 = r - x_pi_gamma
-    D2 = r + rX - x_pi_gamma - x
+    N0 = x_pi_gamma*y - PI_K_RATIO_SQ**2 * (1 - x_pi_gamma * (1 - 2 * y))
+    D1 = PI_K_RATIO_SQ - x_pi_gamma
+    D2 = PI_K_RATIO_SQ + rX - x_pi_gamma - x
 
     return prefactor * gKPI**2 * x * (N0) / (D1**2 * D2**2)
 
@@ -118,6 +178,8 @@ def dGamma_dx_KPiGammaX(x, gKPI, mX):
 
     integral = quad(dGamma_dxdy_KPiGammaX, y_min, y_max, args=(x, gKPI, mX))[0]
     return integral
+
+
 
 
 # Widths for K to pi0 X
