@@ -1,5 +1,5 @@
 # KaonPhysics
-## Emission of vector and axial-vectors in kaon decays via the $\Delta s = 1$ $\chi$PT
+## Emission of vector and axial-vectors in kaon decays via the $\Delta s = 1$ $\chi$ PT
 
 Based on work in collaboration with M. Hostert, M. Pospelov, A. Thompson
 
