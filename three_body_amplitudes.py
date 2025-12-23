@@ -73,10 +73,17 @@ G_8 = 8.49e-12  # MeV^-2
 class KL_to_pip_pim_X(MatrixElementDecay3):
     """
     K_L -> pi+ pi- X
+    Involves contact + kaon emission + pion emission diagrams
     """
-    def __init__(self, mX=17.0, coupling_combination=1.0):
+    def __init__(self, mX=17.0,
+                 gPiPiKPrime=1.0,
+                 gT3V=0.0,
+                 gU3V=0.0):
+        
         super().__init__(m_parent=M_KLONG, m1=M_PI, m2=M_PI, m3=mX)
-        self.gEff = coupling_combination
+        self.gPiPiKPrime = gPiPiKPrime
+        self.gT3V = gT3V
+        self.gU3V = gU3V
         self.mX = mX
     
     @property
@@ -86,9 +93,27 @@ class KL_to_pip_pim_X(MatrixElementDecay3):
     @mX.setter
     def mX(self, value):
         self.m3 = value
+
+    def M2Contact(self, m122, m232):
+        prefact = (G_8 * F_PI/sqrt(2))**2 * self.gPiPiKPrime**2
+
+    def M2ContactPion(self, m122, m232):
+        prefact = (G_8 * F_PI/sqrt(2))**2 * self.gPiPiKPrime * self.gT3V
+
+    def M2ContactKaon(self, m122, m232):
+        prefact = (G_8 * F_PI/sqrt(2))**2 * self.gPiPiKPrime * self.gU3V
+
+    def M2PionKaon(self, m122, m232):
+        prefact = (G_8 * F_PI/sqrt(2))**2 * self.gU3V * self.gT3V
+
+    def M2Pion(self, m122, m232):
+        prefact = (G_8 * F_PI/sqrt(2))**2 * self.gT3V**2
+
+    def M2Kaon(self, m122, m232):
+        prefact = (G_8 * F_PI/sqrt(2))**2 * self.gU3V**2
     
     def __call__(self, m122, m232):
-        prefact = (G_8 * F_PI/sqrt(2))**2 * self.gEff**2
+        prefact = (G_8 * F_PI/sqrt(2))**2 * self.gPiPiKPrime**2
         Ex = (self.m_parent**2 + self.m3**2 - m122)/(2*self.m_parent)
 
         return prefact * self.m_parent**2 * (np.power(Ex/self.m3, 2) - 1)
@@ -148,6 +173,41 @@ class Kp_to_pip_pi0_X(MatrixElementDecay3):
 
 
 
+class Kp_to_pip_XX(MatrixElementDecay3):
+    """
+    K+ -> pi+ X X
+    """
+    def __init__(self, mX=17.0,
+                    gKPiPlusXX=1.0,
+                    gKPiPlus=0.0,
+                    gV3V=0.0,
+                    gT3V=0.0):
+        super().__init__(M_K, mX, mX, M_PI)
+
+        self.gKPiPlus = gKPiPlus
+        self.gKPiPlusXX = gKPiPlusXX
+        self.gV3V = gV3V
+        self.gT3V = gT3V
+        self.mX = mX
+
+    @property
+    def mX(self):
+        return self.m3
+    
+    @mX.setter
+    def mX(self, value):
+        self.m3 = value
+
+    def __call__(self, m122, m232):
+        prefactor = M_K**6 * KAPPA**2 / (2 * self.mX**4)
+        x12 = m122 / (M_K**2)
+        x1Pi = m232 / (M_K**2)
+        return prefactor * (self.gKPiPlus * (self.gV3V - self.gT3V) * (1 - 2*x1Pi + PI_K_RATIO_SQ) \
+                            + 2 * (self.gKPiPlusXX - self.gT3V * self.gV3V) * x12)**2
+
+
+
+
 ################################################################################
 # Exact decay widths ###
 ################################################################################
@@ -182,7 +242,7 @@ def dGamma_dx_KPiGammaX(x, gKPI, mX):
 
 
 
-# Widths for K to pi0 X
+# Widths for K --> pi0 X
 def Gamma_KSPi0X(mX, gKpi):
     pX = (M_K/2) * sqrt(1 - np.power(2 * mX / M_K, 2))
 
@@ -192,3 +252,19 @@ def Gamma_KPlusPiPlusX(mX, gKpi):
     pX = (M_K/2) * sqrt(1 - np.power(2 * mX / M_K, 2))
 
     return KAPPA**2 * pX**3 * gKpi**2 / (4 * pi * mX**2)
+
+
+
+
+# Widths for K+ --> pi+ X X
+def dGamma_KPlusPiPlusXX(m12Sq, m1PiSq,
+                         mX=17.0,
+                         gKPiPlusXX=1.0,
+                         gKPiPlus=0.0,
+                         gV3V=0.0,
+                         gT3V=0.0):
+    prefactor = M_K**9 * KAPPA**2 / (512 * pi**3 * mX**4)
+    x12 = m12Sq / (M_K**2)
+    x1Pi = m1PiSq / (M_K**2)
+    return prefactor * (gKPiPlus * (gV3V - gT3V) * (1 - 2*x1Pi + PI_K_RATIO_SQ) \
+                        + 2 * (gKPiPlusXX - gT3V * gV3V) * x12)**2
