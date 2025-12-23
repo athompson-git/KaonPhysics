@@ -199,7 +199,7 @@ class Kp_to_pip_XX(MatrixElementDecay3):
         self.m3 = value
 
     def __call__(self, m122, m232):
-        prefactor = M_K**6 * KAPPA**2 / (2 * self.mX**4)
+        prefactor = M_K**4 * KAPPA**2 / (2 * self.mX**4)
         x12 = m122 / (M_K**2)
         x1Pi = m232 / (M_K**2)
         return prefactor * (self.gKPiPlus * (self.gV3V - self.gT3V) * (1 - 2*x1Pi + PI_K_RATIO_SQ) \
@@ -257,13 +257,13 @@ def Gamma_KPlusPiPlusX(mX, gKpi):
 
 
 # Widths for K+ --> pi+ X X
-def dGamma_KPlusPiPlusXX(m12Sq, m1PiSq,
+def dGamma_dm12Sq_dm1PiSq_KPlusPiPlusXX(m12Sq, m1PiSq,
                          mX=17.0,
                          gKPiPlusXX=1.0,
                          gKPiPlus=0.0,
                          gV3V=0.0,
                          gT3V=0.0):
-    prefactor = M_K**9 * KAPPA**2 / (512 * pi**3 * mX**4)
+    prefactor = M_K * KAPPA**2 / (512 * pi**3 * mX**4)
     x12 = m12Sq / (M_K**2)
     x1Pi = m1PiSq / (M_K**2)
     return prefactor * (gKPiPlus * (gV3V - gT3V) * (1 - 2*x1Pi + PI_K_RATIO_SQ) \
