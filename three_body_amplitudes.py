@@ -156,7 +156,7 @@ class KL_to_pi0_pi0_X(MatrixElementDecay3):
 
 class Kp_to_pip_pi0_X(MatrixElementDecay3):
     """
-    K_L -> pi+ pi- X
+    K+ -> pi+ pi0 X
     """
     def __init__(self, mX=17.0, coupling_combination=1.0):
         super().__init__(m_parent=M_K, m1=M_PI, m2=M_PI0, m3=mX)
