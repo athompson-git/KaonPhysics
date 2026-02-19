@@ -123,27 +123,33 @@ class KL_to_pip_pim_X(MatrixElementDecay3):
 
 class KL_to_pi0_pi0_X(MatrixElementDecay3):
     """
-    K_L -> pi+ pi- X
+    K_L -> pi0 pi0 X
     """
-    def __init__(self, mX=17.0, coupling_combination=1.0):
+    def __init__(self, mX=17.0, gKpipiX=1.0, gU3V=0.0, coupling_combination=None):
         super().__init__(m_parent=M_KLONG, m1=M_PI0, m2=M_PI0, m3=mX)
-        self.gEff = coupling_combination
+        if coupling_combination is not None:
+            gKpipiX = coupling_combination
+        self.gKpipiX = gKpipiX
+        self.gU3V = gU3V
         self.mX = mX
-    
+
     @property
     def mX(self):
         return self.m3
-    
+
     @mX.setter
     def mX(self, value):
         self.m3 = value
-    
-    def __call__(self, m122, m232):
-        prefact = 9*(G_8 * F_PI/sqrt(2))**2 * self.gEff**2
-        Ex = (self.m_parent**2 + self.m3**2 - m122)/(2*self.m_parent)
 
-        # symmetry factor of 1/(2!)
-        return prefact * self.m_parent**2 * (np.power(Ex/self.m3, 2) - 1) / 2
+    def __call__(self, m122, m232):
+        mK = self.m_parent
+        mX = self.m3
+        # prefact = F^2 G8^2; matrix element squared from the given form
+        prefact = (F_PI * G_8) ** 2
+        bracket = -2 * mX**2 * (m122 + mK**2) + (m122 - mK**2)**2 + mX**4
+        coupling = self.gKpipiX * (m122 - mK**2) + 2 * self.gU3V * (m122 - M_PI0**2)
+        denom = mX**2 * (m122 - mK**2)**2
+        return prefact * bracket * coupling**2 / denom / 2  # factor of 1/2 for symmetry of pi0 pi0
 
 
 
