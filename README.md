@@ -8,8 +8,7 @@ coupled to non-conserved currents in kaon decays using the $\Delta S = 1$ chiral
 Based on work in collaboration with M. Hostert, M. Pospelov, A. Thompson [arXiv:2602.19479](https://arxiv.org/abs/2602.19479),
 accepted for publication in _Physcial Review D_, 2026.
 
-[![DOI](https://zenodo.org/badge/20058561.svg)](https://zenodo.org/badge/latestdoi/20058561)
-
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20058561.svg)](https://doi.org/10.5281/zenodo.20058561)
 
 #### Requirements:
 * matplotlib 3.10.8
