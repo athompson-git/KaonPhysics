@@ -26,7 +26,7 @@ The relevant helper functions, classes, and physical constant definitions are co
 The key calculational ingredients are stored in ```three_body_amplitudes.py```. The classes in this file inherit from
 the ```MatrixElementDecay3``` class structure which captures the kinematic structure of general 3-body decays using
 Dalitz variables. The specific computation of these amplitudes was carried out, as explained in the paper, by
-1. Expanding out the ChPT $\DeltaS = 1$ Lagrangian density $\mathcal{L}_{p^2, G_8}^{\Delta S = 1}$ in powers of $1/F$
+1. Expanding out the ChPT $\Delta S = 1$ Lagrangian density $\mathcal{L}_{p^2, G_8}^{\Delta S = 1}$ in powers of $1/F$
 2. Performing a change of basis to rotate away kinetic mixing terms
 3. Extracting the relevant 3-point and 4-point operators and their coefficients
 4. Applying the Feynman rules using these operators to compute each kaon decay channel
